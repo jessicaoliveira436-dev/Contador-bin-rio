@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Missão Binária: ajude o robô!</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap">
+<style>
+:root{--bg:#05060f;--panel:#0c1030;--line:#27307a;--nb:#22e4ff;--pu:#a855f7;--gr:#39ff88;--rd:#ff5c8a;--tx:#e9f1ff;--mu:#9aa8d8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#05060f}}
+:root[data-theme="dark"]{--bg:#05060f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;color:var(--tx);font-family:system-ui,"Segoe UI",Roboto,sans-serif;background-color:var(--bg);background-image:linear-gradient(rgba(34,228,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(34,228,255,.06) 1px,transparent 1px),radial-gradient(circle at 15% 0,rgba(168,85,247,.3),transparent 45%),radial-gradient(circle at 95% 100%,rgba(57,255,136,.14),transparent 40%);background-size:32px 32px,32px 32px,auto,auto}
+h1,h2,.ft{font-family:"Orbitron","Trebuchet MS",system-ui,sans-serif}
+.wrap{max-width:780px;margin:0 auto;padding:14px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.logo{font-size:clamp(15px,3.6vw,20px);color:var(--nb);text-shadow:0 0 12px var(--nb);margin:0}
+.hud{display:flex;gap:8px;align-items:center}
+.chip{font-family:"Orbitron",sans-serif;font-size:14px;border:1px solid var(--line);border-radius:999px;padding:6px 14px;background:rgba(12,16,48,.8);color:var(--gr)}
+.pills{display:flex;gap:5px}
+.pills i{font-style:normal;font-family:"Orbitron",sans-serif;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:12px;border:1px solid var(--line);color:var(--mu)}
+.pills i.a{border-color:var(--nb);color:var(--nb);box-shadow:0 0 10px var(--nb)}
+.pills i.d{border-color:var(--gr);color:var(--gr)}
+.panel{background:rgba(12,16,48,.88);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 0 26px rgba(34,228,255,.12);position:relative;overflow:hidden}
+.panel::after{content:"";position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--nb),transparent);top:0;opacity:.6;animation:scan 5s linear infinite}
+@keyframes scan{to{top:100%}}
+.stage{display:flex;gap:12px;align-items:flex-end;margin-bottom:12px}
+.robot{width:clamp(84px,22vw,118px);flex:none;overflow:visible}
+.head{fill:#12205c;stroke:var(--nb);stroke-width:3}
+.eye{fill:var(--gr);filter:drop-shadow(0 0 4px var(--gr))}
+.m{fill:none;stroke:var(--gr);stroke-width:4;stroke-linecap:round}
+.sad{display:none}.oops .sad{display:block}.oops .smile{display:none}.oops .eye{fill:var(--rd)}.oops .m{stroke:var(--rd)}
+.body{fill:#1a1160;stroke:var(--pu);stroke-width:3}
+.chest{fill:var(--nb);font:700 12px "Orbitron",monospace}
+.arm{fill:var(--pu);transform-box:fill-box;transform-origin:50% 0}
+.ant{fill:var(--gr);filter:drop-shadow(0 0 6px var(--gr))}
+.say{position:relative;flex:1;background:#0a1240;border:1px solid var(--pu);border-radius:14px;padding:12px 14px;font-size:clamp(14px,3.6vw,17px);line-height:1.5}
+.say::before{content:"";position:absolute;left:-9px;bottom:22px;width:16px;height:16px;background:#0a1240;border-left:1px solid var(--pu);border-bottom:1px solid var(--pu);transform:rotate(45deg)}
+.bar{height:10px;border-radius:99px;background:#10143d;border:1px solid var(--line);overflow:hidden}
+.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pu),var(--nb),var(--gr));transition:width .5s}
+.meta{display:flex;justify-content:space-between;font-size:13px;color:var(--mu);margin:8px 0 12px}
+.ask{font-size:clamp(16px,4vw,20px);margin:0 0 8px;text-align:center}
+.big{font-family:"Orbitron",sans-serif;font-weight:700;text-align:center;font-size:clamp(48px,15vw,88px);color:var(--nb);text-shadow:0 0 18px var(--nb);letter-spacing:.08em;line-height:1.1}
+.lamps{display:flex;justify-content:center;gap:clamp(8px,3vw,18px);margin:10px 0 14px}
+.lp{display:flex;flex-direction:column;align-items:center;gap:4px;font-family:"Orbitron",sans-serif}
+.lp .wt{font-size:13px;color:var(--mu)}
+.lp i{width:clamp(34px,9vw,46px);height:clamp(34px,9vw,46px);border-radius:50%;background:#0a0d2a;border:2px solid var(--line);transition:.4s}
+.lp .bt{font-size:16px;color:var(--mu)}
+.lp.on i{background:var(--gr);border-color:var(--gr);box-shadow:0 0 18px var(--gr)}
+.lp.on .bt{color:var(--gr)}
+.ch{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cbtn,.go{font:700 clamp(20px,5vw,28px)/1 "Orbitron",sans-serif;letter-spacing:.1em;padding:16px 8px;min-height:64px;border-radius:14px;border:2px solid var(--nb);background:#0a1240;color:var(--nb);cursor:pointer;transition:.2s}
+.cbtn:hover:not(:disabled),.go:hover{box-shadow:0 0 18px var(--nb);transform:translateY(-2px)}
+.cbtn:disabled{cursor:default;opacity:.55}
+.cbtn.ok{border-color:var(--gr);color:var(--gr);background:rgba(57,255,136,.12);opacity:1;box-shadow:0 0 18px var(--gr)}
+.cbtn.no{border-color:var(--rd);color:var(--rd);background:rgba(255,92,138,.1);opacity:1}
+.go{font-size:clamp(16px,4vw,20px);padding:14px 26px;border-color:var(--gr);color:var(--gr);background:rgba(57,255,136,.1);display:block;margin:14px auto 0}
+.go:hover{box-shadow:0 0 18px var(--gr)}
+.alt{font:500 14px "Orbitron",sans-serif;display:block;margin:12px auto 0;background:none;border:1px dashed var(--pu);color:var(--pu);padding:8px 16px;border-radius:10px;cursor:pointer}
+.fb{margin-top:12px;border-radius:14px;padding:12px 14px;line-height:1.6;font-size:clamp(14px,3.6vw,16px);border:1px solid var(--line)}
+.fb.ok{border-color:var(--gr);background:rgba(57,255,136,.08)}
+.fb.no{border-color:var(--rd);background:rgba(255,92,138,.08)}
+.fb b{font-family:"Orbitron",sans-serif}
+.hint{margin-top:10px;font-size:14px;color:var(--mu);text-align:center;line-height:1.6}
+.how{margin:10px 0 0;padding:0;list-style:none;display:grid;gap:8px;font-size:15px;line-height:1.5}
+.how li{display:flex;gap:10px}.how b{color:var(--nb);font-family:"Orbitron",sans-serif}
+.title{font-size:clamp(26px,7vw,44px);margin:0 0 4px;color:var(--nb);text-shadow:0 0 18px var(--nb);line-height:1.15}
+.sub{font-size:clamp(15px,4vw,19px);color:var(--pu);margin:0 0 12px;font-family:"Orbitron",sans-serif}
+.stars{font-size:44px;color:var(--gr);text-shadow:0 0 14px var(--gr);text-align:center;letter-spacing:6px}
+.score{font-family:"Orbitron",sans-serif;font-size:clamp(32px,9vw,56px);text-align:center;color:var(--nb);text-shadow:0 0 16px var(--nb)}
+.robot.idle{animation:fl 3s ease-in-out infinite}
+.robot.happy{animation:jp .55s ease 3}
+.robot.oops{animation:sk .5s ease}
+.happy .arm{animation:wv .3s ease infinite alternate}
+@keyframes fl{50%{transform:translateY(-6px)}}
+@keyframes jp{50%{transform:translateY(-22px)}}
+@keyframes sk{20%{transform:translateX(-7px)}60%{transform:translateX(7px)}}
+@keyframes wv{to{transform:rotate(55deg)}}
+@media (max-width:560px){.ch{grid-template-columns:1fr}.stage{align-items:center}.say::before{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:3px solid var(--gr);outline-offset:3px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <p class="logo ft">MISSÃO BINÁRIA</p>
+  <div class="hud" id="hud" hidden><div class="pills" id="pills"></div><div class="chip" id="sc">0 pts</div></div>
+</header>
+
+<main>
+<section id="s0" class="panel">
+  <h1 class="title">MISSÃO BINÁRIA</h1>
+  <p class="sub">Ajude o robô!</p>
+  <div class="stage">
+    <svg class="robot idle" id="r0" viewBox="0 0 120 140" role="img" aria-label="Robô simpático">
+      <line x1="60" y1="8" x2="60" y2="26" stroke="#22e4ff" stroke-width="3"/><circle class="ant" cx="60" cy="8" r="6"/>
+      <rect class="head" x="24" y="26" width="72" height="52" rx="16"/>
+      <circle class="eye" cx="46" cy="50" r="8"/><circle class="eye" cx="74" cy="50" r="8"/>
+      <path class="m smile" d="M44 64 Q60 76 76 64"/>
+      <rect class="arm" x="12" y="88" width="14" height="30" rx="7"/><rect class="arm" x="94" y="88" width="14" height="30" rx="7"/>
+      <rect class="body" x="34" y="84" width="52" height="40" rx="10"/><text class="chest" x="60" y="109" text-anchor="middle">0101</text>
+    </svg>
+    <div class="say">Oi! Eu sou o Bit, o robô. Meu cérebro só entende dois números: <b>0</b> e <b>1</b>. Me ajude a traduzir os números para a minha língua!</div>
+  </div>
+  <div class="lamps" id="demo"></div>
+  <p class="hint">Cada lâmpada vale o dobro da vizinha. <b>Acesa = 1</b>, <b>apagada = 0</b>. Somando as acesas: 4 + 1 = 5, então o número <b>5</b> é <b>101</b> em binário.</p>
+  <ul class="how">
+    <li><b>1</b> Eu mostro um número e você escolhe como ele fica em binário.</li>
+    <li><b>2</b> Acertou? Ganha pontos e eu comemoro. Errou? Eu explico direitinho.</li>
+    <li><b>3</b> Passe por 4 fases e vire Engenheiro Binário!</li>
+  </ul>
+  <button class="go" id="start">Iniciar missão</button>
+</section>
+
+<section id="s1" class="panel" hidden>
+  <div class="stage">
+    <svg class="robot idle" id="robot" viewBox="0 0 120 140" role="img" aria-label="Robô Bit">
+      <line x1="60" y1="8" x2="60" y2="26" stroke="#22e4ff" stroke-width="3"/><circle class="ant" cx="60" cy="8" r="6"/>
+      <rect class="head" x="24" y="26" width="72" height="52" rx="16"/>
+      <circle class="eye" cx="46" cy="50" r="8"/><circle class="eye" cx="74" cy="50" r="8"/>
+      <path class="m smile" d="M44 64 Q60 76 76 64"/><path class="m sad" d="M46 72 Q60 60 74 72"/>
+      <rect class="arm" x="12" y="88" width="14" height="30" rx="7"/><rect class="arm" x="94" y="88" width="14" height="30" rx="7"/>
+      <rect class="body" x="34" y="84" width="52" height="40" rx="10"/><text class="chest" x="60" y="109" text-anchor="middle">0101</text>
+    </svg>
+    <div class="say" id="say" aria-live="polite"></div>
+  </div>
+  <div class="bar"><span id="bf"></span></div>
+  <div class="meta"><span id="mn"></span><span id="ph"></span></div>
+  <p class="ask" id="ask"></p>
+  <div class="big" id="big"></div>
+  <div class="lamps" id="lamps"></div>
+  <div class="ch" id="ch"></div>
+  <p class="hint" id="hint" hidden></p>
+  <button class="alt" id="hb">Preciso de uma dica</button>
+  <div class="fb" id="fb" hidden aria-live="polite"></div>
+  <button class="go" id="nx" hidden>Próxima missão</button>
+</section>
+
+<section id="s2" class="panel" hidden>
+  <div class="stage">
+    <svg class="robot happy" viewBox="0 0 120 140" role="img" aria-label="Robô Bit comemorando">
+      <line x1="60" y1="8" x2="60" y2="26" stroke="#22e4ff" stroke-width="3"/><circle class="ant" cx="60" cy="8" r="6"/>
+      <rect class="head" x="24" y="26" width="72" height="52" rx="16"/>
+      <circle class="eye" cx="46" cy="50" r="8"/><circle class="eye" cx="74" cy="50" r="8"/>
+      <path class="m smile" d="M44 64 Q60 76 76 64"/>
+      <rect class="arm" x="12" y="88" width="14" height="30" rx="7"/><rect class="arm" x="94" y="88" width="14" height="30" rx="7"/>
+      <rect class="body" x="34" y="84" width="52" height="40" rx="10"/><text class="chest" x="60" y="109" text-anchor="middle">1111</text>
+    </svg>
+    <div class="say" id="endmsg"></div>
+  </div>
+  <div class="stars" id="stars"></div>
+  <div class="score" id="fscore"></div>
+  <p class="hint" id="fdet"></p>
+  <p class="hint">Lembre: computadores só usam <b>0</b> e <b>1</b>, e cada lâmpada vale o dobro da vizinha.</p>
+  <button class="go" id="again">Jogar novamente</button>
+</section>
+</main>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const PH=[{n:1,max:3,w:2,pt:10,name:"Fase 1: de 0 a 3"},{n:2,max:7,w:3,pt:10,name:"Fase 2: de 0 a 7"},{n:3,max:10,w:4,pt:10,name:"Fase 3: de 0 a 10"},{n:4,max:15,w:4,pt:20,name:"Fase final: desafio surpresa"}];
+const INTRO=["Missão 1! Com duas lâmpadas, que valem 2 e 1, eu conto até 3.","Fase 2! Ganhei uma lâmpada nova que vale 4. Agora conto até 7.","Fase 3! Chegou a lâmpada de valor 8. Vamos até o 10!","Desafio surpresa! Cada acerto vale o dobro, e agora às vezes eu mostro o binário e você descobre o número."];
+const OKS=["Isso mesmo!","Missão cumprida!","Seu cérebro virou digital!","Acertou em cheio!"];
+let Q=[],qi=0,score=0,hits=0,done=false;
+const bin=(n,w)=>n.toString(2).padStart(w,"0");
+const shuf=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function go(id){["s0","s1","s2"].forEach(s=>$(s).hidden=s!==id);$("hud").hidden=id==="s0"}
+function build(){Q=[];PH.forEach((p,pi)=>{const lo=p.n===4?8:0;shuf(Array.from({length:p.max-lo+1},(_,i)=>lo+i)).slice(0,3).forEach((n,k)=>Q.push({p,pi,n,k,t:p.n===4&&k>0?"b2d":"d2b"}))})}
+function lamps(el,w,b,lit){el.innerHTML=Array.from({length:w},(_,i)=>`<div class="lp${lit&&b[i]==="1"?" on":""}"><span class="wt">${1<<(w-1-i)}</span><i></i><span class="bt">${lit?b[i]:"?"}</span></div>`).join("")}
+function options(q){const{p,n}=q;let o,c;
+ if(q.t==="d2b"){c=bin(n,p.w);const ok=s=>s!==c&&parseInt(s,2)<=p.max;
+  const fl=shuf(Array.from({length:p.w},(_,i)=>bin(n^(1<<i),p.w))).filter(ok);
+  const rest=shuf(Array.from({length:1<<p.w},(_,i)=>bin(i,p.w))).filter(s=>ok(s)&&!fl.includes(s));
+  o=[...new Set([...fl,...rest])].slice(0,2);o.push(c)}
+ else{c=String(n);o=shuf([n-2,n-1,n+1,n+2].filter(v=>v>=0&&v<=15)).slice(0,2).map(String);o.push(c)}
+ shuf(o);return{o,ci:o.indexOf(c)}}
+function why(q){const{p,n}=q,b=bin(n,p.w),ws=[...b].map((d,i)=>d==="1"?1<<(p.w-1-i):0).filter(Boolean);
+ let s=n===0?`Nenhuma lâmpada acesa: o número 0 é <b>${b}</b> em binário.`:`As lâmpadas acesas valem ${ws.join(" + ")}, e a soma dá ${n}. Por isso o número ${n} é <b>${b}</b> em binário.`;
+ if(n>0&&b[0]==="0")s+=` Os zeros à esquerda não mudam o valor: ${b} é o mesmo que ${n.toString(2)}.`;
+ return s}
+function robot(st){const r=$("robot");r.setAttribute("class","robot "+st)}
+function say(t){$("say").innerHTML=t}
+function show(){const q=Q[qi],p=q.p;done=false;
+ $("ph").textContent=p.name;$("mn").textContent=`Missão ${qi+1} de ${Q.length}`;$("bf").style.width=(qi/Q.length*100)+"%";
+ $("pills").innerHTML=PH.map((_,i)=>`<i class="${i<q.pi?"d":i===q.pi?"a":""}">${i<3?i+1:"★"}</i>`).join("");
+ $("ask").innerHTML=q.t==="d2b"?`Como o número <b>${q.n}</b> fica em binário?`:`Que número comum é este binário?`;
+ $("big").textContent=q.t==="d2b"?q.n:bin(q.n,p.w);
+ lamps($("lamps"),p.w,"",false);
+ const{o,ci}=options(q);q.ci=ci;
+ $("ch").innerHTML=o.map((t,i)=>`<button class="cbtn" data-i="${i}">${t}</button>`).join("");
+ $("ch").querySelectorAll("button").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
+ $("fb").hidden=true;$("nx").hidden=true;$("hint").hidden=true;$("hb").hidden=false;
+ say(q.k===0?INTRO[q.pi]:"Você consegue! Escolha a resposta certa.");robot("idle")}
+function pick(i){if(done)return;done=true;const q=Q[qi],ok=i===q.ci,bs=$("ch").querySelectorAll("button");
+ bs.forEach((b,k)=>{b.disabled=true;if(k===q.ci)b.classList.add("ok");else if(k===i)b.classList.add("no")});
+ if(ok){score+=q.p.pt;hits++;$("sc").textContent=score+" pts"}
+ lamps($("lamps"),q.p.w,bin(q.n,q.p.w),true);
+ const ans=q.t==="d2b"?bin(q.n,q.p.w):q.n;
+ const fb=$("fb");fb.className="fb "+(ok?"ok":"no");fb.hidden=false;
+ fb.innerHTML=(ok?`<b>${OKS[Math.floor(Math.random()*OKS.length)]} +${q.p.pt} pontos.</b> `:`<b>Quase! A resposta certa é ${ans}.</b> `)+why(q);
+ say(ok?"Uhuu! Missão cumprida! Meus circuitos estão brilhando!":"Ops! Sem problema, errar faz parte. Veja as lâmpadas acesas e a explicação.");
+ robot(ok?"happy":"oops");$("hb").hidden=true;$("hint").hidden=true;
+ $("nx").textContent=qi===Q.length-1?"Ver resultado":"Próxima missão";$("nx").hidden=false;$("nx").focus()}
+function end(){go("s2");$("bf").style.width="100%";const mx=Q.reduce((s,q)=>s+q.p.pt,0),r=score/mx,st=r>=.9?3:r>=.6?2:1;
+ $("stars").textContent="★".repeat(st)+"☆".repeat(3-st);
+ $("fscore").textContent=`${score} de ${mx} pontos`;
+ $("fdet").textContent=`Você acertou ${hits} de ${Q.length} missões.`;
+ $("endmsg").innerHTML=`<b>Parabéns, Engenheiro Binário!</b> ${r>=.9?"Você falou a língua dos computadores como um craque!":r>=.6?"Você já entende bem o binário. Tente de novo para ganhar as três estrelas!":"Você deu os primeiros passos no binário. Jogue de novo, eu ajudo!"}`}
+function start(){build();qi=0;score=0;hits=0;$("sc").textContent="0 pts";go("s1");show()}
+$("start").onclick=start;$("again").onclick=start;
+$("nx").onclick=()=>{qi++;qi>=Q.length?end():show()};
+$("hb").onclick=()=>{const q=Q[qi],h=$("hint");h.hidden=false;
+ const ws=Array.from({length:q.p.w},(_,i)=>1<<(q.p.w-1-i)).join(", ");
+ h.innerHTML=q.t==="d2b"?`Dica: as lâmpadas valem ${ws}. Escolha as que somam ${q.n}. Acesa vira 1 e apagada vira 0.`:`Dica: as lâmpadas valem ${ws}. Some só os valores onde o binário tem 1.`};
+lamps($("demo"),3,"101",true);
+</script>
+</body>
+</html>
