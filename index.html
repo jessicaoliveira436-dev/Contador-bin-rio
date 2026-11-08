@@ -69,6 +69,17 @@ h1,h2,.ft{font-family:"Orbitron","Trebuchet MS",system-ui,sans-serif}
 .sub{font-size:clamp(15px,4vw,19px);color:var(--pu);margin:0 0 12px;font-family:"Orbitron",sans-serif}
 .stars{font-size:44px;color:var(--gr);text-shadow:0 0 14px var(--gr);text-align:center;letter-spacing:6px}
 .score{font-family:"Orbitron",sans-serif;font-size:clamp(32px,9vw,56px);text-align:center;color:var(--nb);text-shadow:0 0 16px var(--nb)}
+.nm{display:block;margin:14px auto 0;max-width:340px;text-align:center}
+.nm span{display:block;font-size:14px;color:var(--mu);margin-bottom:6px}
+.nm input{width:100%;font:700 20px "Orbitron",sans-serif;text-align:center;padding:12px;border-radius:12px;border:2px solid var(--pu);background:#0a1240;color:var(--tx)}
+.err{color:var(--rd);font-size:14px;text-align:center;margin:6px 0 0}
+.rt{font-size:clamp(16px,4vw,20px);color:var(--pu);margin:16px 0 8px;text-align:center}
+.rank{list-style:none;margin:0;padding:0;display:grid;gap:6px;counter-reset:r}
+.rank li{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 12px;background:#0a1240;counter-increment:r}
+.rank li::before{content:counter(r);font-family:"Orbitron",sans-serif;color:var(--nb);width:24px}
+.rank li span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rank li b{font-family:"Orbitron",sans-serif;color:var(--gr)}
+.rank li.me{border-color:var(--gr);box-shadow:0 0 14px rgba(57,255,136,.4)}
 .robot.idle{animation:fl 3s ease-in-out infinite}
 .robot.happy{animation:jp .55s ease 3}
 .robot.oops{animation:sk .5s ease}
@@ -112,6 +123,8 @@ h1,h2,.ft{font-family:"Orbitron","Trebuchet MS",system-ui,sans-serif}
     <li><b>2</b> Acertou? Ganha pontos e eu comemoro. Errou? Eu explico direitinho.</li>
     <li><b>3</b> Passe por 4 fases e vire Engenheiro Binário!</li>
   </ul>
+  <label class="nm"><span>Qual é o seu nome, piloto?</span><input id="nm" maxlength="12" autocomplete="off" placeholder="Digite seu nome"></label>
+  <p class="err" id="nerr" hidden>Digite seu nome para começar a missão.</p>
   <button class="go" id="start">Iniciar missão</button>
 </section>
 
@@ -155,7 +168,12 @@ h1,h2,.ft{font-family:"Orbitron","Trebuchet MS",system-ui,sans-serif}
   <div class="score" id="fscore"></div>
   <p class="hint" id="fdet"></p>
   <p class="hint">Lembre: computadores só usam <b>0</b> e <b>1</b>, e cada lâmpada vale o dobro da vizinha.</p>
+  <h2 class="rt">Ranking dos melhores pilotos</h2>
+  <p class="hint" id="pos"></p>
+  <ol class="rank" id="rank"></ol>
   <button class="go" id="again">Jogar novamente</button>
+  <button class="alt" id="next">Reiniciar jogo</button>
+  <button class="alt" id="rz">Zerar ranking</button>
 </section>
 </main>
 </div>
@@ -194,7 +212,7 @@ function show(){const q=Q[qi],p=q.p;done=false;
  $("ch").innerHTML=o.map((t,i)=>`<button class="cbtn" data-i="${i}">${t}</button>`).join("");
  $("ch").querySelectorAll("button").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
  $("fb").hidden=true;$("nx").hidden=true;$("hint").hidden=true;$("hb").hidden=false;
- say(q.k===0?INTRO[q.pi]:"Você consegue! Escolha a resposta certa.");robot("idle")}
+ say(q.k===0?(qi===0?"Vamos lá, "+esc(NAME)+"! ":"")+INTRO[q.pi]:"Você consegue! Escolha a resposta certa.");robot("idle")}
 function pick(i){if(done)return;done=true;const q=Q[qi],ok=i===q.ci,bs=$("ch").querySelectorAll("button");
  bs.forEach((b,k)=>{b.disabled=true;if(k===q.ci)b.classList.add("ok");else if(k===i)b.classList.add("no")});
  if(ok){score+=q.p.pt;hits++;$("sc").textContent=score+" pts"}
@@ -209,9 +227,30 @@ function end(){go("s2");$("bf").style.width="100%";const mx=Q.reduce((s,q)=>s+q.
  $("stars").textContent="★".repeat(st)+"☆".repeat(3-st);
  $("fscore").textContent=`${score} de ${mx} pontos`;
  $("fdet").textContent=`Você acertou ${hits} de ${Q.length} missões.`;
- $("endmsg").innerHTML=`<b>Parabéns, Engenheiro Binário!</b> ${r>=.9?"Você falou a língua dos computadores como um craque!":r>=.6?"Você já entende bem o binário. Tente de novo para ganhar as três estrelas!":"Você deu os primeiros passos no binário. Jogue de novo, eu ajudo!"}`}
+ const list=loadR(),me={n:NAME,s:score,t:Date.now()};list.push(me);list.sort((a,b)=>b.s-a.s||a.t-b.t);
+ const pos=list.indexOf(me)+1,top=list.slice(0,10);saveR(top);
+ $("pos").textContent=pos<=10?`Você ficou em ${pos}º lugar!`:`Você ficou em ${pos}º lugar. Tente entrar no top 10!`;
+ $("rank").innerHTML=top.map(r=>`<li class="${r===me?"me":""}"><span>${esc(r.n)}</span><b>${r.s}</b></li>`).join("");
+ $("endmsg").innerHTML=`<b>Parabéns, ${esc(NAME)}! Você virou Engenheiro Binário!</b> ${r>=.9?"Você falou a língua dos computadores como um craque!":r>=.6?"Você já entende bem o binário. Tente de novo para ganhar as três estrelas!":"Você deu os primeiros passos no binário. Jogue de novo, eu ajudo!"}`}
 function start(){build();qi=0;score=0;hits=0;$("sc").textContent="0 pts";go("s1");show()}
-$("start").onclick=start;$("again").onclick=start;
+let NAME="",rzT;
+const RK="missaoBinariaRanking";
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function loadR(){try{return JSON.parse(localStorage.getItem(RK))||[]}catch(e){return[]}}
+function saveR(l){try{localStorage.setItem(RK,JSON.stringify(l))}catch(e){}}
+function begin(){const v=$("nm").value.trim();if(!v){$("nerr").hidden=false;$("nm").focus();return}NAME=v;start()}
+$("start").onclick=begin;$("again").onclick=start;
+$("next").onclick=()=>{
+  qi=0;score=0;hits=0;done=false;
+  $("sc").textContent="0 pts";
+  $("nm").value="";
+  NAME="";
+  go("s0");
+  $("nm").focus();
+};
+$("nm").oninput=()=>{$("nerr").hidden=true};
+$("nm").onkeydown=e=>{if(e.key==="Enter")begin()};
+$("rz").onclick=function(){if(this.dataset.c){saveR([]);this.removeAttribute("data-c");this.textContent="Zerar ranking";$("rank").innerHTML="";$("pos").textContent="Ranking zerado."}else{this.dataset.c=1;this.textContent="Toque de novo para confirmar";clearTimeout(rzT);rzT=setTimeout(()=>{this.removeAttribute("data-c");this.textContent="Zerar ranking"},3000)}};
 $("nx").onclick=()=>{qi++;qi>=Q.length?end():show()};
 $("hb").onclick=()=>{const q=Q[qi],h=$("hint");h.hidden=false;
  const ws=Array.from({length:q.p.w},(_,i)=>1<<(q.p.w-1-i)).join(", ");
